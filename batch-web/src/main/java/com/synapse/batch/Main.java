@@ -27,7 +27,7 @@ public class Main extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    @LoadBalanced
+//    @LoadBalanced
     public RestTemplate restTemplate() {
         return new RestTemplateProxy();
     }
