@@ -1,0 +1,107 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"/>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script type="text/javascript" th:src="@{/batch/job/v1/js/jquery-3.2.0.min.js}"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>ID</th>
+        <th>beanName</th>
+        <th>url</th>
+        <th>jobName</th>
+        <th>cron</th>
+        <th>jobGroup</th>
+        <th>schedName</th>
+        <th>status</th>
+        <th><a href="/batch/job/v1/new">添加</a></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="job,stat: ${jobs}">
+        <td th:text="${stat.index}">序号</td>
+        <td th:text="${job.recId}">ID</td>
+        <td th:text="${job.beanName}">beanName</td>
+        <td th:text="${job.url}">url</td>
+        <td th:text="${job.jobName}">jobName</td>
+        <td th:text="${job.cron}">cron</td>
+        <td th:text="${job.jobGroup}">jobGroup</td>
+        <td th:text="${job.schedName}">schedName</td>
+        <td th:text="${job.status}">status</td>
+        <td>
+            <a th:href="@{/batch/job/v1/view/{recId}(recId=${job.recId})}">查看</a>
+            <a th:href="@{/batch/job/v1/edit/{recId}(recId=${job.recId})}">修改</a>
+            <a th:href="@{javascript:start({recId})(recId=${job.recId})}">启动</a>
+            <a th:href="@{javascript:stop({recId})(recId=${job.recId})}">停止</a>
+            <a th:href="@{javascript:del({recId})(recId=${job.recId})}">删除</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<script type="text/javascript">
+    function del(id) {
+        if (confirm("确认删除吗？")) {
+            $.ajax({
+                url: '/batch/job/v1/delete/' + id,
+                type: 'DELETE',
+                success: function (data) {
+                    if (data == "true") {
+                        window.location.reload();
+                    } else {
+                        alert("删除失败！");
+                    }
+                },
+                error: function () {
+                    alert("删除异常！");
+                }
+            });
+        }
+    }
+    function start(id) {
+            $.ajax({
+                url: '/batch/job/v1/start/' + id,
+                type: 'POST',
+                success: function (data) {
+                    if (data == "true") {
+                        window.location.reload();
+                    } else {
+                        alert("启动失败！");
+                    }
+                },
+                error: function () {
+                    alert("启动异常！");
+                }
+            });
+    }
+    function stop(id) {
+        if (confirm("确认停止吗？")) {
+            $.ajax({
+                url: '/batch/job/v1/stop/' + id,
+                type: 'POST',
+                success: function (data) {
+                    if (data == "true") {
+                        window.location.reload();
+                    } else {
+                        alert("停止失败！");
+                    }
+                },
+                error: function () {
+                    alert("停止异常！");
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

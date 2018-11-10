@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.synapse.batch.mapper.JobMapper">
+    <resultMap id="BaseResultMap" type="com.synapse.batch.model.Job">
+        <id column="rec_id" jdbcType="BIGINT" property="recId"/>
+        <result column="bean_name" jdbcType="VARCHAR" property="beanName"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="cron" jdbcType="VARCHAR" property="cron"/>
+        <result column="job_name" jdbcType="VARCHAR" property="jobName"/>
+        <result column="job_group" jdbcType="VARCHAR" property="jobGroup"/>
+        <result column="sched_name" jdbcType="VARCHAR" property="schedName"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="add_time" jdbcType="DATE" property="addTime"/>
+        <result column="update_time" jdbcType="DATE" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    rec_id, bean_name, url, cron, job_name,job_group,sched_name, status, add_time, update_time
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from job
+        where rec_id = #{recId,jdbcType=BIGINT}
+    </select>
+    <select id="listJob" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from job where status > -1
+    </select>
+    <select id="selectAllStartedJob"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from job where status = 1
+    </select>
+    <select id="selectByUrl" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from job where url = #{url,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update job
+    set status = -1
+    where rec_id = #{recId,jdbcType=BIGINT}
+  </delete>
+    <delete id="deleteByJobNameAndJobGroupAndSchedName" parameterType="com.synapse.batch.model.Job">
+        update  job
+        set status = -1
+    where job_name = #{jobName,jdbcType=BIGINT}
+    and job_group = #{jobGroup,jdbcType=BIGINT}
+    and sched_name = #{schedName,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.synapse.batch.model.Job">
+        <selectKey keyProperty="recId" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    insert into job (rec_id, bean_name, url, cron, job_name,job_group,sched_name, status, add_time, update_time)
+    values (#{recId,jdbcType=BIGINT}, #{beanName,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{cron,jdbcType=VARCHAR},
+      #{jobName,jdbcType=VARCHAR},#{jobGroup,jdbcType=VARCHAR},#{schedName,jdbcType=VARCHAR},#{status,jdbcType=INTEGER},
+      now(),now()
+      )
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.synapse.batch.model.Job">
+    update job
+    set bean_name = #{beanName,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      cron = #{cron,jdbcType=VARCHAR},
+      job_name = #{jobName,jdbcType=VARCHAR},
+      job_group = #{jobGroup,jdbcType=VARCHAR},
+      sched_name = #{schedName,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      update_time = now()
+    where rec_id = #{recId,jdbcType=BIGINT}
+  </update>
+    <update id="updateByJobNameAndJobGroupAndSchedName" parameterType="com.synapse.batch.model.Job">
+        update job
+    set bean_name = #{beanName,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      cron = #{cron,jdbcType=VARCHAR},
+      update_time = now(),
+    where job_name = #{jobName,jdbcType=VARCHAR}
+    and job_group = #{jobGroup,jdbcType=VARCHAR}
+    and sched_name = #{schedName,jdbcType=VARCHAR}
+    </update>
+</mapper>
