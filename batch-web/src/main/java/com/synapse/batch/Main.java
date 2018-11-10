@@ -19,7 +19,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @SpringBootApplication
 @ComponentScan({"com.synapse.batch", "com.synapse.common.sso"})
 @MapperScan("com.synapse.batch.mapper")
-@EnableEurekaClient
+//@EnableEurekaClient
 public class Main extends WebMvcConfigurerAdapter {
 
     public static void main(String[] args) {
